@@ -93,9 +93,6 @@ public class PrisonZone : MonoBehaviour
         imprisonedAgent.isImprisoned = false;
         imprisonedAgent.state = AgentState.Idle; // Teleports back to Correct Side
         imprisonedAgent.transform.position = new Vector3(10f, 0f, 0f);
-        other.transform.position = new Vector3(8f, 0f, 0f);
-
-        // TODO: Rule 8: Both Agents need to return to their side before doing anything else
-        //agent.state = AgentState.Returning;
+        other.transform.position = new Vector3(9f, 0f, 0f);
     }
 }

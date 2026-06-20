@@ -17,14 +17,11 @@ public class Agent : MonoBehaviour
 
     [Header("Stats")]
     public float moveSpeed = 5f;
-    public float tagRadius = 0.6f;
+    public float tagRadius = 0.5f;
 
     // For Highlighting the Selected Player-Controlled Agent
     private SpriteRenderer sr;
     private Color baseColor;
-
-    // TODO: Reference to the AI controller
-    //public AIController aiController;
 
     void Awake()
     {

@@ -64,6 +64,13 @@ public class GameManager : MonoBehaviour
         return (teamID == 0) ? this.teamEnemySidePrisonZone : this.teamPlayerSidePrisonZone;
     }
 
+    public bool IsInEnemyTerritory(Agent agent)
+    {
+        // Is the Enemy Half depending on the Agent's TeamID
+        bool inEnemyHalf = agent.transform.position.x > fieldCentreX;
+        return (agent.teamID == 0) ? !inEnemyHalf : inEnemyHalf;
+    }
+
     public bool CanTag(Agent agent)
     {
         // Agent can Tag only on their own Territory

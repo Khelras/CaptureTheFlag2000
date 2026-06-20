@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,12 +31,16 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.gameStarted == false) return;
+
         // Movement Inputs
         this.moveInput = this.controls.Player.Move.ReadValue<Vector2>();
     }
 
     private void FixedUpdate()
     {
+        if (GameManager.Instance.gameStarted == false) return;
+
         // An Agent has been Selected
         if (this.selectedAgent != null)
         {
@@ -92,17 +95,17 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        // Smooth toward Input Direction using Lerp
+        // Apply Acceleration and smooth toward Input Direction using Lerp
         float lerpSpeed = this.moveInput.sqrMagnitude > 0.01f ? this.acceleration : this.deceleration;
         this.smoothVelocity = Vector2.Lerp(this.smoothVelocity, this.moveInput, lerpSpeed * Time.deltaTime);
 
         // Normalise to prevent faster Diagonals
         if (this.smoothVelocity.sqrMagnitude > 1f) this.smoothVelocity = this.smoothVelocity.normalized;
 
-        // Apply the Movement
-        Vector2 newPos = this.selectedAgent.rb.position + this.smoothVelocity * this.selectedAgent.moveSpeed * Time.fixedDeltaTime;
-        newPos = this.ClampToCameraBounds(newPos); // Clamp to camera bounds
-        this.selectedAgent.rb.MovePosition(newPos);
+        // Apply Velocity to the Position
+        Vector2 targetPosition = this.selectedAgent.rb.position + this.smoothVelocity * this.selectedAgent.moveSpeed * Time.fixedDeltaTime;
+        targetPosition = this.ClampToCameraBounds(targetPosition); // Clamp to camera bounds
+        this.selectedAgent.rb.MovePosition(targetPosition);
     }
 
     Vector2 ClampToCameraBounds(Vector2 position)

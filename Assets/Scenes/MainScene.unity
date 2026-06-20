@@ -330,7 +330,7 @@ MonoBehaviour:
   isImprisoned: 0
   isPlayerControlled: 0
   moveSpeed: 5
-  tagRadius: 0.6
+  tagRadius: 0.5
 --- !u!58 &23028727
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -958,7 +958,7 @@ MonoBehaviour:
   isImprisoned: 0
   isPlayerControlled: 0
   moveSpeed: 5
-  tagRadius: 0.6
+  tagRadius: 0.5
 --- !u!58 &145973346
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1319,7 +1319,7 @@ MonoBehaviour:
   isImprisoned: 0
   isPlayerControlled: 0
   moveSpeed: 5
-  tagRadius: 0.6
+  tagRadius: 0.5
 --- !u!212 &295516115
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1509,7 +1509,7 @@ MonoBehaviour:
   isImprisoned: 0
   isPlayerControlled: 0
   moveSpeed: 5
-  tagRadius: 0.6
+  tagRadius: 0.5
 --- !u!58 &310204955
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3119,7 +3119,7 @@ MonoBehaviour:
   isImprisoned: 0
   isPlayerControlled: 0
   moveSpeed: 5
-  tagRadius: 0.6
+  tagRadius: 0.5
 --- !u!58 &840891060
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5693,7 +5693,7 @@ MonoBehaviour:
   isImprisoned: 0
   isPlayerControlled: 0
   moveSpeed: 5
-  tagRadius: 0.6
+  tagRadius: 0.5
 --- !u!58 &1516054014
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5883,7 +5883,7 @@ MonoBehaviour:
   isImprisoned: 0
   isPlayerControlled: 0
   moveSpeed: 5
-  tagRadius: 0.6
+  tagRadius: 0.5
 --- !u!58 &1519949416
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -9645,7 +9645,7 @@ MonoBehaviour:
   isImprisoned: 0
   isPlayerControlled: 0
   moveSpeed: 5
-  tagRadius: 0.6
+  tagRadius: 0.5
 --- !u!58 &2074245521
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -28,7 +28,6 @@ public class TagChecker : MonoBehaviour
             if (other == null) continue;
             if (other.teamID == this.self.teamID) continue;  // Skip Agents on Same Team
             if (other.isImprisoned) continue; // Agent already caught
-            if (other.state == AgentState.Returning) continue; // Agent just got Freed from Prison
 
             // The Prison to send the Other Agent to
             Transform prison = (other.teamID == 0)
