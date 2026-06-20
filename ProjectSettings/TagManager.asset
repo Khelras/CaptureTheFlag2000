@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Agent
   - 
   - 
   - 
@@ -47,7 +47,7 @@ TagManager:
   - name: Flags
     uniqueID: 882852463
     locked: 0
-  - name: Players
+  - name: Agents
     uniqueID: 432403759
     locked: 0
   m_RenderingLayers:
