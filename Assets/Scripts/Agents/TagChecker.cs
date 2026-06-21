@@ -13,6 +13,8 @@ public class TagChecker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.gameStarted == false) return;
+
         // Ignore if in Prison
         if (this.self.isImprisoned) return;
 
@@ -30,11 +32,10 @@ public class TagChecker : MonoBehaviour
             if (other.isImprisoned) continue; // Agent already caught
 
             // The Prison to send the Other Agent to
-            Transform prison = (other.teamID == 0)
-                ? GameManager.Instance.teamEnemySidePrison // Send to Prison on the Player's Side
-                : GameManager.Instance.teamPlayerSidePrison; // Send to Prison on the Enemy's Side
+            int side = (other.teamID == 0) ? 1 : 0;
+            PrisonZone prison = GameManager.Instance.GetPrisonZone(side);
 
-            // Tag the Enemy
+            // Tag the Enemy and send them to Prison
             other.GetTagged(prison);
         }
     }
@@ -43,7 +44,7 @@ public class TagChecker : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         // Opaque Red
-        Gizmos.color = new Color(1f, 0f, 0f, 0.75f); 
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f); 
         Gizmos.DrawWireSphere(this.transform.position, this.GetComponent<Agent>()?.tagRadius ?? 1f);
     }
 }

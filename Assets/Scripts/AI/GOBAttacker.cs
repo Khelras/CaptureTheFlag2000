@@ -1,11 +1,12 @@
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class GOBAttacker : MonoBehaviour
 {
     private Agent self;
     private SteeringBehaviours steering;
-    private GOBDecision gob;
+    private GOBDecisionMaking gob;
 
     [Header("Decision Intervals")]
     public float decisionInterval = 1.5f; // Re-evaluate GOB every N seconds
@@ -15,7 +16,8 @@ public class GOBAttacker : MonoBehaviour
     private Agent nearestThreat;
 
     [Header("Threat Awareness")]
-    public float threatDetectionRadius = 5f;
+    public float immediateFleeRadius = 2.5f;
+    public float threatDetectionRadius = 4f;
 
     [Header("Zones")]
     public ScoreZone scoreZone;
@@ -24,7 +26,7 @@ public class GOBAttacker : MonoBehaviour
     {
         this.self = GetComponent<Agent>();
         this.steering = GetComponent<SteeringBehaviours>();
-        this.gob = GetComponent<GOBDecision>();
+        this.gob = GetComponent<GOBDecisionMaking>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -58,38 +60,72 @@ public class GOBAttacker : MonoBehaviour
 
     void DetectThreats()
     {
-        // Reset the Nearest Threat
-        this.nearestThreat = null;
-        float closestDistance = this.threatDetectionRadius;
-        int enemyTeam = (this.self.teamID == 0) ? 1 : 0;
+        // Reset the Nearest Threat for Update
+        nearestThreat = null;
 
-        // Loop through the all Enemy Agents
-        foreach (var enemy in ((enemyTeam == 0) ? GameManager.Instance.teamPlayer : GameManager.Instance.teamEnemy))
+        // Check if the Agent was previously Threatened
+        bool wasThreatened = this.nearestThreat != null;
+
+        // Agent is on their own Side so Enemy Agents are not a Threat
+        if (GameManager.Instance.IsInEnemyTerritory(self) == false)
         {
-            // Ignore if the Enemy Agent is in Prison
-            if (enemy.isImprisoned == true) continue;
-
-            // Distance between this Agent and the Enemy Agent
-            float distance = Vector2.Distance(transform.position, enemy.transform.position);
-            if (distance < closestDistance) // Check if this Distance is the Closest
+            // If the Agent was previously Threatened
+            if (wasThreatened)
             {
-                // Save the Closest Distanced Enemy
-                closestDistance = distance; 
-                nearestThreat = enemy;
+                // Reset their Steering Velocity
+                steering.velocity = Vector2.zero;
+            }
+
+            // Do NOT proceed and check for a Threat
+            return;
+        }
+
+        // Find the Closest Threat
+        float closest = this.threatDetectionRadius;
+        int enemyTeam = this.self.teamID == 0 ? 1 : 0;
+        var enemies = (enemyTeam == 0) ? GameManager.Instance.teamPlayer : GameManager.Instance.teamEnemy;
+
+        // Loop through all the Enemy Agents
+        foreach (var enemy in enemies)
+        {
+            // Ignore Imprisoned Enemies
+            if (enemy.isImprisoned) continue;
+
+            // Distance between the this Agent and the Enemy Agent
+            float distance = Vector2.Distance(this.transform.position, enemy.transform.position);
+            if (distance < closest) // Check if this is the Closest Enemy Agent
+            { 
+                // The Closest Enemy Agent is the Nearest Threat
+                closest = distance; 
+                this.nearestThreat = enemy; 
             }
         }
     }
 
-    void ExecuteGoal()
+    Vector2 GetSteerWithThreatResponse(Vector2 goalSteering)
     {
-        // Evade if is Threatened and is Carrying a Flag
-        if (this.nearestThreat != null && this.self.carriedFlag != null)
+        if (GameManager.Instance.IsInEnemyTerritory(self) == false) return goalSteering; // Safe on Own Side
+        if (this.nearestThreat == null) return goalSteering; // There is no Immediate Threat
+
+        // Distance between the Agent and the Nearest Threat
+        float distance = Vector2.Distance(this.transform.position, nearestThreat.transform.position);
+
+        // The Threat is too close, Purely Evade
+        if (distance < this.immediateFleeRadius) return steering.Evade(nearestThreat.GetComponent<Rigidbody2D>());
+
+        // Threat is within a Medium Range, Blend and have Evade Weight Scale with Proximity
+        if (distance < this.threatDetectionRadius)
         {
-            this.self.state = AgentState.CarryingFlag;
-            this.steering.ApplySteering(this.steering.Evade(this.nearestThreat.GetComponent<Rigidbody2D>()));
-            return;
+            float t = 1f - ((distance - this.immediateFleeRadius) / (this.threatDetectionRadius - this.immediateFleeRadius));
+            return Vector2.Lerp(goalSteering, this.steering.Evade(this.nearestThreat.GetComponent<Rigidbody2D>()), t * 0.6f);
         }
 
+        // Threat is Far away, Pure Goal Steering
+        return goalSteering;
+    }
+
+    void ExecuteGoal()
+    {
         // Otherwise, Execute Capture Flag Goal or Free Teammate Goal
         if (this.currentGoal == AIGoal.CaptureFlag) this.ExecuteCaptureFlag();
         else if (this.currentGoal == AIGoal.FreeTeammate) this.ExecuteFreeTeammate();
@@ -102,21 +138,10 @@ public class GOBAttacker : MonoBehaviour
         // Agent is carrying a Flag
         if (this.self.carriedFlag != null)
         {
-            // Seek to the Score Zone
+            // Steer to the Score Zone with Awareness for Threats
             Vector2 scoreZonePosition = this.scoreZone.transform.position;
-            Vector2 seekToScoreZone = this.steering.Seek(scoreZonePosition);
-            if (this.nearestThreat != null) // There is a Threat Nearby
-            {
-                // Blend Seek and Evade
-                Vector2 evade = this.steering.Evade(this.nearestThreat.GetComponent<Rigidbody2D>());
-                this.steering.ApplySteering((seekToScoreZone + evade * 1.5f) * 0.5f);
-            }
-            else // There is no Threats Nearby
-            {
-                // Simple apply the Seek Steering Force to the Score Zone
-                this.steering.ApplySteering(seekToScoreZone);
-            }
-
+            Vector2 steerToScoreZone = this.GetSteerWithThreatResponse(this.steering.Arrive(this.scoreZone.transform.position));
+            this.steering.ApplySteering(steerToScoreZone);
             return;
         }
 
@@ -125,22 +150,12 @@ public class GOBAttacker : MonoBehaviour
         if (flags.Count == 0) return; // There is no Flags to Seek
 
         // Agent is wanting to get a Flag
-        self.state = AgentState.MovingToFlag;
+        this.self.state = AgentState.MovingToFlag;
         Flag target = flags.OrderBy(f => Vector2.Distance(transform.position, f.transform.position)).First(); // Nearest
 
-        // Evade Threats while Moving to Flag
-        Vector2 seekToFlag = this.steering.Seek(target.transform.position);
-        if (this.nearestThreat != null) // There is a Threat Nearby
-        {
-            // Blend Seek and Evade
-            Vector2 evade = this.steering.Evade(this.nearestThreat.GetComponent<Rigidbody2D>());
-            this.steering.ApplySteering((seekToFlag + evade * 1.5f) * 0.5f);
-        }
-        else // There is no Threats Nearby
-        {
-            // Simple apply the Seek Steering Force to the Flag
-            this.steering.ApplySteering(seekToFlag);
-        }
+        // Steer to Flag with an Awareness for Threats
+        Vector2 steerToFlag = this.GetSteerWithThreatResponse(this.steering.Seek(target.transform.position));
+        this.steering.ApplySteering(steerToFlag);
     }
 
     void ExecuteFreeTeammate()
@@ -149,18 +164,20 @@ public class GOBAttacker : MonoBehaviour
         this.self.state = AgentState.MovingToPrison;
         Vector2 prisonPosition = GameManager.Instance.GetPrisonZone((this.self.teamID == 0) ? 1 : 0).transform.position;
 
-        // Seek to the Prison
-        Vector2 seekToPrison = this.steering.Seek(prisonPosition);
-        if (this.nearestThreat != null) // There is a Threat Nearby
-        {
-            // Blend Seek and Evade
-            Vector2 evade = this.steering.Evade(this.nearestThreat.GetComponent<Rigidbody2D>());
-            this.steering.ApplySteering((seekToPrison + evade * 1.5f) * 0.5f);
-        }
-        else // There is no Threats Nearby
-        {
-            // Simple apply the Seek Steering Force to the Prison
-            this.steering.ApplySteering(seekToPrison);
-        }
+        // Steer to the Prison with Awareness for Threats
+        Vector2 steerToPrison = this.GetSteerWithThreatResponse(this.steering.Seek(prisonPosition));
+        this.steering.ApplySteering(steerToPrison);
+    }
+
+    // Visualise Threat Detection Radius in the Editor
+    void OnDrawGizmosSelected()
+    {
+        // Opaque Blue
+        Gizmos.color = new Color(0f, 0f, 1f, 0.5f);
+        Gizmos.DrawWireSphere(this.transform.position, this.GetComponent<GOBAttacker>()?.threatDetectionRadius ?? 1f);
+
+        // Opaque Purple
+        Gizmos.color = new Color(0.5f, 0f, 0.5f, 0.5f);
+        Gizmos.DrawWireSphere(this.transform.position, this.GetComponent<GOBAttacker>()?.immediateFleeRadius ?? 1f);
     }
 }

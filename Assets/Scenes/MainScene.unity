@@ -288,6 +288,10 @@ GameObject:
   - component: {fileID: 23028727}
   - component: {fileID: 23028726}
   - component: {fileID: 23028729}
+  - component: {fileID: 23028732}
+  - component: {fileID: 23028734}
+  - component: {fileID: 23028733}
+  - component: {fileID: 23028731}
   m_Layer: 6
   m_Name: PA3
   m_TagString: Untagged
@@ -464,6 +468,71 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &23028731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23028724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f8b854d87274c428d5e55067e16f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuleBasedDefender
+  detectionRadius: 5
+  patrolTarget: {x: 0, y: 0}
+--- !u!114 &23028732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23028724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae4da1968abc234b8db27f4e75cda03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringBehaviours
+  maxSpeed: 5
+  maxForce: 10
+  slowingRadius: 1.5
+  velocity: {x: 0, y: 0}
+--- !u!114 &23028733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23028724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b55d731cd917f4db0a0abc0e349504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBDecisionMaking
+  captureGoal:
+    type: 0
+    insistence: 5
+  freeGoal:
+    type: 1
+    insistence: 0
+  captureInsistenceRate: 0.5
+--- !u!114 &23028734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23028724}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1223a5648e19489d36bee3e076961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBAttacker
+  decisionInterval: 1.5
+  immediateFleeRadius: 2.5
+  threatDetectionRadius: 4
+  scoreZone: {fileID: 1759696753}
 --- !u!1 &29646841
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,6 +778,53 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.5, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &82658892
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 82658893}
+  - component: {fileID: 82658894}
+  m_Layer: 0
+  m_Name: PlayerTeamManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &82658893
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82658892}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 287966486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &82658894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82658892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b527dd2659fa68459877ed772729ac5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTeamManager
+  playerTeamID: 0
+  roleReassignInterval: 2
+  playerController: {fileID: 1123767405}
 --- !u!1 &118266142
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,6 +1032,10 @@ GameObject:
   - component: {fileID: 145973346}
   - component: {fileID: 145973345}
   - component: {fileID: 145973348}
+  - component: {fileID: 145973353}
+  - component: {fileID: 145973352}
+  - component: {fileID: 145973351}
+  - component: {fileID: 145973350}
   m_Layer: 6
   m_Name: EA2
   m_TagString: Untagged
@@ -1092,6 +1212,71 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &145973350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 145973343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f8b854d87274c428d5e55067e16f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuleBasedDefender
+  detectionRadius: 6
+  patrolTarget: {x: 0, y: 0}
+--- !u!114 &145973351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 145973343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b55d731cd917f4db0a0abc0e349504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBDecisionMaking
+  captureGoal:
+    type: 0
+    insistence: 5
+  freeGoal:
+    type: 1
+    insistence: 0
+  captureInsistenceRate: 0.5
+--- !u!114 &145973352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 145973343}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1223a5648e19489d36bee3e076961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBAttacker
+  decisionInterval: 1.5
+  immediateFleeRadius: 2.5
+  threatDetectionRadius: 4
+  scoreZone: {fileID: 1787562625}
+--- !u!114 &145973353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 145973343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae4da1968abc234b8db27f4e75cda03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringBehaviours
+  maxSpeed: 4.2
+  maxForce: 10
+  slowingRadius: 1.5
+  velocity: {x: 0, y: 0}
 --- !u!1 &244695977
 GameObject:
   m_ObjectHideFlags: 0
@@ -1261,6 +1446,8 @@ Transform:
   - {fileID: 1003781657}
   - {fileID: 1123767404}
   - {fileID: 518330579}
+  - {fileID: 1842358894}
+  - {fileID: 82658893}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &295516112
@@ -1277,6 +1464,10 @@ GameObject:
   - component: {fileID: 295516116}
   - component: {fileID: 295516114}
   - component: {fileID: 295516117}
+  - component: {fileID: 295516120}
+  - component: {fileID: 295516122}
+  - component: {fileID: 295516121}
+  - component: {fileID: 295516119}
   m_Layer: 6
   m_Name: PA1
   m_TagString: Untagged
@@ -1453,6 +1644,71 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &295516119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295516112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f8b854d87274c428d5e55067e16f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuleBasedDefender
+  detectionRadius: 5
+  patrolTarget: {x: 0, y: 0}
+--- !u!114 &295516120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295516112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae4da1968abc234b8db27f4e75cda03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringBehaviours
+  maxSpeed: 5
+  maxForce: 10
+  slowingRadius: 1.5
+  velocity: {x: 0, y: 0}
+--- !u!114 &295516121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295516112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b55d731cd917f4db0a0abc0e349504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBDecisionMaking
+  captureGoal:
+    type: 0
+    insistence: 5
+  freeGoal:
+    type: 1
+    insistence: 0
+  captureInsistenceRate: 0.5
+--- !u!114 &295516122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295516112}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1223a5648e19489d36bee3e076961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBAttacker
+  decisionInterval: 1.5
+  immediateFleeRadius: 2.5
+  threatDetectionRadius: 4
+  scoreZone: {fileID: 1759696753}
 --- !u!1 &310204952
 GameObject:
   m_ObjectHideFlags: 0
@@ -1467,6 +1723,10 @@ GameObject:
   - component: {fileID: 310204955}
   - component: {fileID: 310204954}
   - component: {fileID: 310204957}
+  - component: {fileID: 310204960}
+  - component: {fileID: 310204962}
+  - component: {fileID: 310204961}
+  - component: {fileID: 310204959}
   m_Layer: 6
   m_Name: PA2
   m_TagString: Untagged
@@ -1643,6 +1903,71 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &310204959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310204952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f8b854d87274c428d5e55067e16f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuleBasedDefender
+  detectionRadius: 5
+  patrolTarget: {x: 0, y: 0}
+--- !u!114 &310204960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310204952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae4da1968abc234b8db27f4e75cda03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringBehaviours
+  maxSpeed: 5
+  maxForce: 10
+  slowingRadius: 1.5
+  velocity: {x: 0, y: 0}
+--- !u!114 &310204961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310204952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b55d731cd917f4db0a0abc0e349504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBDecisionMaking
+  captureGoal:
+    type: 0
+    insistence: 5
+  freeGoal:
+    type: 1
+    insistence: 0
+  captureInsistenceRate: 0.5
+--- !u!114 &310204962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310204952}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1223a5648e19489d36bee3e076961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBAttacker
+  decisionInterval: 1.5
+  immediateFleeRadius: 2.5
+  threatDetectionRadius: 4
+  scoreZone: {fileID: 1759696753}
 --- !u!1 &453625487
 GameObject:
   m_ObjectHideFlags: 0
@@ -3077,6 +3402,10 @@ GameObject:
   - component: {fileID: 840891060}
   - component: {fileID: 840891059}
   - component: {fileID: 840891062}
+  - component: {fileID: 840891065}
+  - component: {fileID: 840891067}
+  - component: {fileID: 840891066}
+  - component: {fileID: 840891064}
   m_Layer: 6
   m_Name: PA4
   m_TagString: Untagged
@@ -3253,6 +3582,71 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &840891064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840891057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f8b854d87274c428d5e55067e16f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuleBasedDefender
+  detectionRadius: 5
+  patrolTarget: {x: 0, y: 0}
+--- !u!114 &840891065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840891057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae4da1968abc234b8db27f4e75cda03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringBehaviours
+  maxSpeed: 5
+  maxForce: 10
+  slowingRadius: 1.5
+  velocity: {x: 0, y: 0}
+--- !u!114 &840891066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840891057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b55d731cd917f4db0a0abc0e349504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBDecisionMaking
+  captureGoal:
+    type: 0
+    insistence: 5
+  freeGoal:
+    type: 1
+    insistence: 0
+  captureInsistenceRate: 0.5
+--- !u!114 &840891067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840891057}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1223a5648e19489d36bee3e076961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBAttacker
+  decisionInterval: 1.5
+  immediateFleeRadius: 2.5
+  threatDetectionRadius: 4
+  scoreZone: {fileID: 1759696753}
 --- !u!1 &850251240
 GameObject:
   m_ObjectHideFlags: 0
@@ -3770,15 +4164,15 @@ MonoBehaviour:
   - {fileID: 1334247870}
   - {fileID: 1672409732}
   - {fileID: 869540179}
-  teamPlayerSidePrison: {fileID: 1484006473}
   teamPlayerSidePrisonZone: {fileID: 1484006474}
-  teamEnemySidePrison: {fileID: 850251241}
   teamEnemySidePrisonZone: {fileID: 850251242}
   fieldCentreX: 0
-  gameStarted: 0
+  gameStarted: 1
   winnerTeamID: -1
   teamPlayerScore: 0
   teamEnemyScore: 0
+  teamPlayerSideScoreZone: {fileID: 1759696753}
+  teamEnemySideScoreZone: {fileID: 1787562625}
 --- !u!1 &1029531284
 GameObject:
   m_ObjectHideFlags: 0
@@ -5651,6 +6045,10 @@ GameObject:
   - component: {fileID: 1516054014}
   - component: {fileID: 1516054013}
   - component: {fileID: 1516054016}
+  - component: {fileID: 1516054021}
+  - component: {fileID: 1516054020}
+  - component: {fileID: 1516054019}
+  - component: {fileID: 1516054018}
   m_Layer: 6
   m_Name: EA3
   m_TagString: Untagged
@@ -5827,6 +6225,71 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &1516054018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1516054011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f8b854d87274c428d5e55067e16f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuleBasedDefender
+  detectionRadius: 6
+  patrolTarget: {x: 0, y: 0}
+--- !u!114 &1516054019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1516054011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b55d731cd917f4db0a0abc0e349504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBDecisionMaking
+  captureGoal:
+    type: 0
+    insistence: 5
+  freeGoal:
+    type: 1
+    insistence: 0
+  captureInsistenceRate: 0.5
+--- !u!114 &1516054020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1516054011}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1223a5648e19489d36bee3e076961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBAttacker
+  decisionInterval: 1.5
+  immediateFleeRadius: 2.5
+  threatDetectionRadius: 4
+  scoreZone: {fileID: 1787562625}
+--- !u!114 &1516054021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1516054011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae4da1968abc234b8db27f4e75cda03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringBehaviours
+  maxSpeed: 4.2
+  maxForce: 10
+  slowingRadius: 1.5
+  velocity: {x: 0, y: 0}
 --- !u!1 &1519949413
 GameObject:
   m_ObjectHideFlags: 0
@@ -5841,6 +6304,10 @@ GameObject:
   - component: {fileID: 1519949416}
   - component: {fileID: 1519949415}
   - component: {fileID: 1519949418}
+  - component: {fileID: 1519949423}
+  - component: {fileID: 1519949422}
+  - component: {fileID: 1519949421}
+  - component: {fileID: 1519949420}
   m_Layer: 6
   m_Name: EA1
   m_TagString: Untagged
@@ -6017,6 +6484,71 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &1519949420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519949413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f8b854d87274c428d5e55067e16f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuleBasedDefender
+  detectionRadius: 6
+  patrolTarget: {x: 0, y: 0}
+--- !u!114 &1519949421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519949413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b55d731cd917f4db0a0abc0e349504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBDecisionMaking
+  captureGoal:
+    type: 0
+    insistence: 5
+  freeGoal:
+    type: 1
+    insistence: 0
+  captureInsistenceRate: 0.5
+--- !u!114 &1519949422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519949413}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1223a5648e19489d36bee3e076961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBAttacker
+  decisionInterval: 1.5
+  immediateFleeRadius: 2.5
+  threatDetectionRadius: 4
+  scoreZone: {fileID: 1787562625}
+--- !u!114 &1519949423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519949413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae4da1968abc234b8db27f4e75cda03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringBehaviours
+  maxSpeed: 4.2
+  maxForce: 10
+  slowingRadius: 1.5
+  velocity: {x: 0, y: 0}
 --- !u!1 &1567098148
 GameObject:
   m_ObjectHideFlags: 0
@@ -9060,6 +9592,52 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1842358893
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1842358894}
+  - component: {fileID: 1842358895}
+  m_Layer: 0
+  m_Name: AITeamManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1842358894
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842358893}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 287966486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1842358895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842358893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f5210b43d43864792f48c41422ef04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AITeamManager
+  aiTeamID: 1
+  roleReassignInterval: 2
 --- !u!1 &1861044792
 GameObject:
   m_ObjectHideFlags: 0
@@ -9603,6 +10181,10 @@ GameObject:
   - component: {fileID: 2074245521}
   - component: {fileID: 2074245520}
   - component: {fileID: 2074245523}
+  - component: {fileID: 2074245528}
+  - component: {fileID: 2074245527}
+  - component: {fileID: 2074245526}
+  - component: {fileID: 2074245525}
   m_Layer: 6
   m_Name: EA4
   m_TagString: Untagged
@@ -9779,6 +10361,71 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &2074245525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074245518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f8b854d87274c428d5e55067e16f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuleBasedDefender
+  detectionRadius: 6
+  patrolTarget: {x: 0, y: 0}
+--- !u!114 &2074245526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074245518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b55d731cd917f4db0a0abc0e349504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBDecisionMaking
+  captureGoal:
+    type: 0
+    insistence: 5
+  freeGoal:
+    type: 1
+    insistence: 0
+  captureInsistenceRate: 0.5
+--- !u!114 &2074245527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074245518}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1223a5648e19489d36bee3e076961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOBAttacker
+  decisionInterval: 1.5
+  immediateFleeRadius: 2.5
+  threatDetectionRadius: 4
+  scoreZone: {fileID: 1787562625}
+--- !u!114 &2074245528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074245518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae4da1968abc234b8db27f4e75cda03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringBehaviours
+  maxSpeed: 4.2
+  maxForce: 10
+  slowingRadius: 1.5
+  velocity: {x: 0, y: 0}
 --- !u!1 &2088100350
 GameObject:
   m_ObjectHideFlags: 0

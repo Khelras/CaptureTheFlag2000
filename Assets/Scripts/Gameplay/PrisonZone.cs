@@ -31,11 +31,6 @@ public class PrisonZone : MonoBehaviour
         
     }
 
-    public int getTotalAgentsInPrison()
-    {
-        return this.slots.Count;
-    }
-
     public void ImprisonAgent(Agent agent)
     {
         // Imprison the Agent
@@ -87,12 +82,14 @@ public class PrisonZone : MonoBehaviour
         if (imprisonedAgent == null) return; // No one to free
 
         // Free the Imprisoned Agent from their slot
-        GameManager.Instance.GetPrisonZone(imprisonedAgent.teamID).FreeSlot(imprisonedAgent.prisonSlotIndex);
+        int side = (agent.teamID == 0) ? 1 : 0;
+        GameManager.Instance.GetPrisonZone(side).FreeSlot(imprisonedAgent.prisonSlotIndex);
 
         // Free the Imprisoned Agent
         imprisonedAgent.isImprisoned = false;
         imprisonedAgent.state = AgentState.Idle; // Teleports back to Correct Side
-        imprisonedAgent.transform.position = new Vector3(10f, 0f, 0f);
-        other.transform.position = new Vector3(9f, 0f, 0f);
+        float sign = (agent.teamID == 0) ? 1f : -1f;
+        imprisonedAgent.transform.position = new Vector3(10f * sign, 0f, 0f);
+        other.transform.position = new Vector3(9f * sign, 0f, 0f);
     }
 }

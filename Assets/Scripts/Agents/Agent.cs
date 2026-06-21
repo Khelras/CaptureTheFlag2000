@@ -56,7 +56,7 @@ public class Agent : MonoBehaviour
         this.sr.color = selected ? new Color(0f, 0.9f, 1f, 0.9f) : baseColor;
     }
 
-    public void GetTagged(Transform prisonLocation)
+    public void GetTagged(PrisonZone prison)
     {
         // Check if the Agent was carrying a Flag
         if (carriedFlag != null)
@@ -67,7 +67,6 @@ public class Agent : MonoBehaviour
         }
 
         // Find the respective Prison Zone and Imprison the Agent
-        PrisonZone prison = GameManager.Instance.GetPrisonZone(this.teamID);
         prison.ImprisonAgent(this);
     }
 }

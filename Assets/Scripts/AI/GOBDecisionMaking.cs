@@ -13,7 +13,7 @@ public class Goal
     public float insistence;
 }
 
-public class GOBDecision : MonoBehaviour
+public class GOBDecisionMaking : MonoBehaviour
 {
     private Agent self;
 
@@ -45,6 +45,9 @@ public class GOBDecision : MonoBehaviour
     public AIGoal EvaluateBestGoal()
     {
         int enemyTeamID = this.self.teamID == 0 ? 1 : 0;
+
+        // If Agent is already Carrying a Flag then simply go to Score
+        if (this.self.carriedFlag != null) return AIGoal.CaptureFlag;
 
         // Update insistences based on world state
         this.UpdateInsistences(enemyTeamID);

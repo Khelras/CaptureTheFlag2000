@@ -13,9 +13,7 @@ public class GameManager : MonoBehaviour
     public List<Flag> teamEnemyFlags = new List<Flag>();
 
     [Header("Prisons")]
-    public Transform teamPlayerSidePrison;
     public PrisonZone teamPlayerSidePrisonZone;
-    public Transform teamEnemySidePrison;
     public PrisonZone teamEnemySidePrisonZone;
 
     [Header("Territories")]
@@ -28,6 +26,8 @@ public class GameManager : MonoBehaviour
     [Header("Score")]
     public int teamPlayerScore = 0;
     public int teamEnemyScore = 0;
+    public ScoreZone teamPlayerSideScoreZone;
+    public ScoreZone teamEnemySideScoreZone;
 
     void Awake()
     {
@@ -59,9 +59,16 @@ public class GameManager : MonoBehaviour
             .Where(a => a.isImprisoned == true).ToList();
     }
 
+
+    // Returns the Team ID's Prison Zone on their Side
     public PrisonZone GetPrisonZone(int teamID)
     {
-        return (teamID == 0) ? this.teamEnemySidePrisonZone : this.teamPlayerSidePrisonZone;
+        return (teamID == 0) ? this.teamPlayerSidePrisonZone : this.teamEnemySidePrisonZone;
+    }
+
+    public ScoreZone GetScoreZone(int teamID)
+    {
+        return (teamID == 0) ? this.teamPlayerSideScoreZone : this.teamEnemySideScoreZone;
     }
 
     public bool IsInEnemyTerritory(Agent agent)
@@ -109,8 +116,8 @@ public class GameManager : MonoBehaviour
         }
 
         // Win Condition based on the amount of Agents in Prison
-        playerWins = this.teamPlayerSidePrisonZone.getTotalAgentsInPrison() >= 4;
-        enemyWins = this.teamEnemySidePrisonZone.getTotalAgentsInPrison() >= 4;
+        playerWins = this.teamEnemy.All(a => a.isImprisoned == true); // Player Wins if ALL Enemy Agents are in Prison
+        enemyWins = this.teamPlayer.All(a => a.isImprisoned == true); // Enemy Wins if ALL Player Agents are in Prison
 
         // Ensure one of the Sides won
         if (playerWins == true || enemyWins == true) this.TriggerWin((playerWins == true) ? 0 : 1);

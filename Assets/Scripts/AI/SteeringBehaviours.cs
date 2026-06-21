@@ -3,8 +3,8 @@ using UnityEngine;
 public class SteeringBehaviours : MonoBehaviour
 {
     [Header("Steering Settings")]
-    public float maxSpeed = 4f;
-    public float maxForce = 8f;
+    public float maxSpeed = 5f;
+    public float maxForce = 10f;
     public float slowingRadius = 1.5f;
 
     [HideInInspector] public Vector2 velocity;
@@ -105,10 +105,10 @@ public class SteeringBehaviours : MonoBehaviour
     public Vector2 Pursue(Rigidbody2D target)
     {
         // Position of the Target
-        Vector2 toTarget = target.position - (Vector2)transform.position;
+        Vector2 toTarget = target.position - (Vector2)this.transform.position;
 
         // Prediction of WHERE the Target will BE
-        float lookAhead = toTarget.magnitude / maxSpeed;
+        float lookAhead = Mathf.Max(0.5f, toTarget.magnitude / this.maxSpeed);
         Vector2 predictedPosition = (Vector2)target.transform.position + target.linearVelocity * lookAhead;
 
         // Seek towards the Predicted Position
@@ -118,10 +118,10 @@ public class SteeringBehaviours : MonoBehaviour
     public Vector2 Evade(Rigidbody2D threat)
     {
         // Position of the Threat
-        Vector2 toThreat = (Vector2)threat.transform.position - (Vector2)transform.position;
+        Vector2 toThreat = (Vector2)threat.transform.position - (Vector2)this.transform.position;
 
         // Prediction of WHERE the Threat will BE
-        float lookAhead = toThreat.magnitude / maxSpeed;
+        float lookAhead = toThreat.magnitude / this.maxSpeed;
         Vector2 predictedPosition = (Vector2)threat.transform.position + threat.linearVelocity * lookAhead;
 
         // Flee away from the Predicted Position

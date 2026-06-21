@@ -7,13 +7,13 @@ public class RuleBasedDefender : MonoBehaviour
     private SteeringBehaviours steering;
 
     [Header("Detection")]
-    public float detectionRadius = 5f;
+    public float detectionRadius = 6f;
 
     // Working Memory
-    private bool enemyInTerritory;
-    private bool enemyCarryingFlag;
-    private bool prisonerNeedsGuard;
-    private Agent closestEnemy;
+    private bool enemyInMyTerritory;
+    private bool enemyCarryingMyFlag;
+    private bool myPrisonNeedsGuards;
+    private Agent assignedTarget;
 
     void Awake()
     {
@@ -37,87 +37,126 @@ public class RuleBasedDefender : MonoBehaviour
     void FixedUpdate()
     {
         if (GameManager.Instance.gameStarted == false) return; // Ensure Game is Playing
+        if (self.isPlayerControlled) return; // Ensure the Agent is NOT already controlled by the Player
         if (this.self.isImprisoned) return; // Ensure the Agent is NOT in Prison
 
         this.UpdateWorkingMemory();
         this.ExecuteRules();
     }
 
+    public void AssignTarget(Agent target) => this.assignedTarget = target;
+    public void ClearTarget() => this.assignedTarget = null;
+
     void UpdateWorkingMemory()
     {
-        // Reset the Closest Enemy Memory
-        this.closestEnemy = null;
-        float closestDistance = this.detectionRadius;
         int enemyTeam = (this.self.teamID == 0) ? 1 : 0;
+        var enemies = (enemyTeam == 0) ? GameManager.Instance.teamPlayer : GameManager.Instance.teamEnemy;
 
-        // Loop through the all Enemy Agents
-        foreach (var enemy in ((enemyTeam == 0) ? GameManager.Instance.teamPlayer : GameManager.Instance.teamEnemy))
+        // Defender Memory
+        this.enemyInMyTerritory = false;
+        this.enemyCarryingMyFlag = false;
+
+        // Loop through all the Enemy Agents
+        foreach (var enemy in enemies)
         {
-            // Ignore if the Enemy Agent is in Prison
+            // Enemies in Prison are not a Threat themselves
             if (enemy.isImprisoned) continue;
 
-            // Distance between this Agent and the Enemy Agent
-            float distance = Vector2.Distance(this.transform.position, enemy.transform.position);
-            if (distance < closestDistance) // Check if this Distance is the Closest
+            // Check if this Enemy is within my Territory
+            if (GameManager.Instance.IsInEnemyTerritory(enemy) == true)
             {
-                // Save the Closest Distanced Enemy
-                closestDistance = distance;
-                closestEnemy = enemy;
+                // This Enemy is within my Territory
+                this.enemyInMyTerritory = true;
+                
+                // This Enemy is also carrying my Flag
+                if (enemy.carriedFlag != null) enemyCarryingMyFlag = true;
             }
         }
 
-        // Memory Updated
-        this.enemyInTerritory = this.closestEnemy != null && GameManager.Instance.IsInEnemyTerritory(this.closestEnemy) == false;
-        this.enemyCarryingFlag = this.closestEnemy != null && this.closestEnemy.carriedFlag != null;
-        this.prisonerNeedsGuard = GameManager.Instance.GetImprisonedAgents(enemyTeam).Count > 0;
+        // My Prison needs Guards if we have Prisoners present
+        this.myPrisonNeedsGuards = GameManager.Instance.GetImprisonedAgents(enemyTeam).Count > 0;
     }
 
     // Forward Chaining — Fire the First matching Rule.
     // Therefore, the Rules with a Higher Priority should be closer to the First in the order.
     void ExecuteRules()
     {
-        // Rule 1: IF an Enemy is Carrying a Flag, PURSUE the Enemy
-        if (this.enemyCarryingFlag == true && this.closestEnemy != null)
+        // Rule 1: IF Assigned to a Specific Target, PURSUE them
+        if (this.assignedTarget != null && this.assignedTarget.isImprisoned == false)
         {
             this.self.state = AgentState.Defending;
-            this.steering.ApplySteering(this.steering.Pursue(this.closestEnemy.GetComponent<Rigidbody2D>()));
+            this.steering.ApplySteering(this.steering.Pursue(this.assignedTarget.GetComponent<Rigidbody2D>()));
             return;
         }
 
-        // Rule 2: IF an Enemy is in our Territory, PURSUE the Enemy
-        if (this.enemyInTerritory == true && this.closestEnemy != null)
+        // Rule 2: IF an Enemy is Carrying my Flag, PURSUE the nearest Enemy with a Flag
+        if (this.enemyCarryingMyFlag == true)
         {
             this.self.state = AgentState.Defending;
-            this.steering.ApplySteering(this.steering.Pursue(this.closestEnemy.GetComponent<Rigidbody2D>()));
+            Agent carrier = this.GetNearestEnemyWithFlag(); // Nearest Enemy with a Flag
+            if (carrier != null)
+                this.steering.ApplySteering(this.steering.Pursue(carrier.GetComponent<Rigidbody2D>()));
+            
             return;
         }
 
-        // Rule 3: IF there are Prisoners in our Prison, PATROL near the Prison
-        if (this.prisonerNeedsGuard == true)
+        // Rule 3: IF an Enemy is in our Territory, PURSUE the nearest Enemy
+        if (this.enemyInMyTerritory == true)
         {
             this.self.state = AgentState.Defending;
-            Vector2 prisonPosition = GameManager.Instance.GetPrisonZone((this.self.teamID == 0) ? 1 : 0).transform.position;
-            this.steering.ApplySteering(this.steering.Arrive(prisonPosition));
+            Agent intruder = this.GetNearestEnemyInMyTerritory(); // Nearest Enemy
+            if (intruder != null)
+                this.steering.ApplySteering(this.steering.Pursue(intruder.GetComponent<Rigidbody2D>()));
+            
             return;
         }
 
-        // Rule 4: Default Rule, PATROL near our own Flags
-        this.self.state = AgentState.Defending;
-        this.PatrolFlags();
+        // Rule 4: Default Rule, PATROL
+        this.ExecutePatrolRole();
     }
 
-    void PatrolFlags()
+    // Patrol Target Assigned by the Respective Team Manager
+    [HideInInspector] public Vector2 patrolTarget;
+
+    void ExecutePatrolRole()
     {
-        // Arrive at the Nearest Uncaptured Flag to Guard it
-        int myTeam = self.teamID;
-        var myFlags = (myTeam == 0) ? GameManager.Instance.teamPlayerFlags : GameManager.Instance.teamEnemyFlags;
+        self.state = AgentState.Defending;
 
-        var nearestFlag = myFlags
-            .Where(f => f.isCaptured  == false) // Uncaptured Flags
-            .OrderBy(f => Vector2.Distance(this.transform.position, f.transform.position)) // Closest
-            .FirstOrDefault(); // First
+        // Patrol Duty based on their Patrol Target Assigned by the Respective Team Manager
+        if (this.patrolTarget != Vector2.zero) this.steering.ApplySteering(this.steering.Arrive(patrolTarget));
+    }
 
-        // Patrol and Guard the Nearest Uncaptured Flag
-        if (nearestFlag != null) this.steering.ApplySteering(this.steering.Arrive(nearestFlag.transform.position));
+    Agent GetNearestEnemyWithFlag()
+    {
+        // Enemy Team
+        int enemyTeam = self.teamID == 0 ? 1 : 0;
+        var enemies = enemyTeam == 0 ? GameManager.Instance.teamPlayer : GameManager.Instance.teamEnemy;
+
+        // Return the Nearest Enemy with a Flag
+        return enemies
+            .Where(e => !e.isImprisoned && e.carriedFlag != null)
+            .OrderBy(e => Vector2.Distance(this.transform.position, e.transform.position))
+            .FirstOrDefault();
+    }
+
+    Agent GetNearestEnemyInMyTerritory()
+    {
+        // Enemy Team
+        int enemyTeam = self.teamID == 0 ? 1 : 0;
+        var enemies = (enemyTeam == 0) ? GameManager.Instance.teamPlayer : GameManager.Instance.teamEnemy;
+
+        // Return the Nearest Enemy within my Territory
+        return enemies
+            .Where(e => e.isImprisoned == false && GameManager.Instance.IsInEnemyTerritory(e) == true)
+            .OrderBy(e => Vector2.Distance(this.transform.position, e.transform.position))
+            .FirstOrDefault();
+    }
+
+    // Visualise Detection Radius in the Editor
+    void OnDrawGizmosSelected()
+    {
+        // Opaque Green
+        Gizmos.color = new Color(0f, 1f, 0f, 0.5f);
+        Gizmos.DrawWireSphere(this.transform.position, this.GetComponent<RuleBasedDefender>()?.detectionRadius ?? 1f);
     }
 }
