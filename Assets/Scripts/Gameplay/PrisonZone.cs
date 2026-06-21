@@ -53,6 +53,10 @@ public class PrisonZone : MonoBehaviour
 
     private Vector2 SlotIndexToWorldPosition(int index)
     {
+        // If the given Index is more than the Slots
+        int maxSlots = this.rows * this.columns;
+        if ((index + 1) > maxSlots) return (Vector2)this.transform.position;
+
         // Lay Slots out in a Grid Relative to the Center of the Prison Zone
         int col = index % this.columns;
         int row = index / this.rows;
@@ -78,7 +82,8 @@ public class PrisonZone : MonoBehaviour
         if (agent.carriedFlag != null) return; // Agent cannot free another Agent if they are Carrying a Flag
 
         // This Agent is from the Opposing Team and Entering the Prison to free their Teammate
-        Agent imprisonedAgent = GameManager.Instance.GetImprisonedAgents(agent.teamID).FirstOrDefault();
+        var imprisonedAgents = GameManager.Instance.GetImprisonedAgents(agent.teamID);
+        Agent imprisonedAgent = imprisonedAgents.OrderByDescending(a => a.prisonSlotIndex).First();
         if (imprisonedAgent == null) return; // No one to free
 
         // Free the Imprisoned Agent from their slot
