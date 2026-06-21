@@ -127,7 +127,38 @@ public class PlayerController : MonoBehaviour
         // Apply Velocity to the Position
         Vector2 desiredPosition = this.selectedAgent.rb.position + desiredVelocity * Time.fixedDeltaTime;
         desiredPosition = this.ClampToCameraBounds(desiredPosition); // Clamp to Camera Bounds
+        desiredPosition = this.ResolveObstacleCollision(desiredPosition); // Clamp to Camera Bounds
         this.selectedAgent.rb.MovePosition(desiredPosition);
+    }
+
+    Vector2 ResolveObstacleCollision(Vector2 desiredPosition)
+    {
+        // Agent Radius
+        float agentCircleRadius = this.selectedAgent.GetComponent<CircleCollider2D>().radius;
+
+        // Check if the Desired Position overlaps any Obstacle
+        Collider2D hit = Physics2D.OverlapCircle(desiredPosition, agentCircleRadius, this.obstacleLayer);
+
+        // There is no Wall and can therefore move Freely
+        if (hit == null) return desiredPosition;
+
+        // Find the Closest Point on the Obstacle Collider to our Current Position
+        Vector2 currentPosition = this.selectedAgent.rb.position;
+        Vector2 closestPoint = hit.ClosestPoint(currentPosition);
+
+        // Push Out Direction from the Obstacle Surface toward Agent
+        Vector2 pushDirection = (currentPosition - closestPoint).normalized;
+
+        // Slide along the Obstacle
+        Vector2 movement = desiredPosition - currentPosition;
+        Vector2 slideMovement = movement - Vector2.Dot(movement, -pushDirection) * (-pushDirection);
+        Vector2 resolvedPosition = currentPosition + slideMovement;
+
+        // Double Check to make sure the Resolved Position also does not overlap with an Obstacle
+        if (Physics2D.OverlapCircle(resolvedPosition, agentCircleRadius, obstacleLayer) != null)
+            return currentPosition; // Fully Blocked and cannot Move
+
+        return resolvedPosition;
     }
 
     Vector2 ClampToCameraBounds(Vector2 position)
