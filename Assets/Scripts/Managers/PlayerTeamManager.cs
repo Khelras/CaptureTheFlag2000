@@ -36,6 +36,13 @@ public class PlayerTeamManager : MonoBehaviour
         }
     }
 
+    // Call after Agents are Spawned in Game Manager
+    public void OnAgentsSpawned()
+    {
+        this.AssignRoles();
+        this.AssignDefenderPatrols();
+    }
+
     void AssignRoles()
     {
         // The Player's Team

@@ -22,7 +22,7 @@ public class TagChecker : MonoBehaviour
         if (GameManager.Instance.CanTag(this.self) == false) return;
 
         // Check for Agents within the Tag Radius
-        Collider2D[] nearby = Physics2D.OverlapCircleAll(transform.position, this.self.tagRadius);
+        Collider2D[] nearby = Physics2D.OverlapCircleAll(this.transform.position, this.self.tagRadius);
         foreach (var col in nearby) // Loop through all of the Agents
         {
             // Check if this Other Agent can be Tagged

@@ -19,9 +19,6 @@ public class GOBAttacker : MonoBehaviour
     public float immediateFleeRadius = 2.5f;
     public float threatDetectionRadius = 4f;
 
-    [Header("Zones")]
-    public ScoreZone scoreZone;
-
     void Awake()
     {
         this.self = GetComponent<Agent>();
@@ -159,8 +156,9 @@ public class GOBAttacker : MonoBehaviour
         if (this.self.carriedFlag != null)
         {
             // Steer to the Score Zone with Awareness for Threats
-            Vector2 scoreZonePosition = this.scoreZone.transform.position;
-            Vector2 steerToScoreZone = this.GetSteerWithThreatResponse(this.steering.Arrive(this.scoreZone.transform.position));
+            ScoreZone scoreZone = GameManager.Instance.GetScoreZone(this.self.teamID);
+            Vector2 scoreZonePosition = scoreZone.transform.position;
+            Vector2 steerToScoreZone = this.GetSteerWithThreatResponse(this.steering.Arrive(scoreZone.transform.position));
             this.steering.ApplySteering(steerToScoreZone);
             return;
         }

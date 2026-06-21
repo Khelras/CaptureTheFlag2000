@@ -33,6 +33,13 @@ public class AITeamManager : MonoBehaviour
         }
     }
 
+    // Call after Agents are Spawned in Game Manager
+    public void OnAgentsSpawned()
+    {
+        this.AssignRoles();
+        this.AssignDefenderPatrols();
+    }
+
     void AssignRoles()
     {
         // The Full AI Team

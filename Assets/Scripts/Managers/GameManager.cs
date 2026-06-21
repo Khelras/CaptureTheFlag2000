@@ -6,9 +6,16 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [Header("Teams")]
-    public List<Agent> teamPlayer = new List<Agent>();
-    public List<Agent> teamEnemy = new List<Agent>();
+    [Header("Spawning")]
+    public GameObject playerAgentPrefab;
+    public GameObject enemyAgentPrefab;
+    public Transform playerAgentParent;
+    public Transform enemyAgentParent;
+    [HideInInspector] public int chosenTeamSize = 4; // set by UI
+    [HideInInspector] public List<Agent> teamPlayer = new List<Agent>();
+    [HideInInspector] public List<Agent> teamEnemy = new List<Agent>();
+
+    [Header("Flags")]
     public List<Flag> teamPlayerFlags = new List<Flag>();
     public List<Flag> teamEnemyFlags = new List<Flag>();
 
@@ -45,6 +52,52 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void SpawnAgents()
+    {
+        // Clear Teams
+        this.teamPlayer.Clear();
+        this.teamEnemy.Clear();
+
+        // Spawn Evenly Spread Out Horizontally
+        float camHeight = Camera.main.orthographicSize * 2f;
+        float spacing = camHeight / (this.chosenTeamSize + 1);
+
+        // Agent Spawn Loop
+        for (int i = 0; i < this.chosenTeamSize; i++)
+        {
+            // Spawn Y
+            float spawnY = ((i + 1) * spacing) - Camera.main.orthographicSize;
+
+            // -- Player Agent Spawning -- //
+            // Instantiate the Game Object
+            Vector3 playerPosition = new Vector3(2f, spawnY, 0f);
+            GameObject pa = Instantiate(this.playerAgentPrefab, playerPosition, Quaternion.identity);
+            pa.transform.SetParent(this.playerAgentParent);
+
+            // Set the Player Agent Properties
+            Agent playerAgent = pa.GetComponent<Agent>();
+            playerAgent.teamID = 0;
+            this.teamPlayer.Add(playerAgent);
+            // -- //
+
+            // -- Enemy Agent Spawning -- //
+            // Instantiate the Game Object
+            Vector3 enemyPosition = new Vector3(-2f, spawnY, 0f);
+            GameObject ea = Instantiate(this.enemyAgentPrefab, enemyPosition, Quaternion.identity);
+            ea.transform.SetParent(this.enemyAgentParent);
+
+            // Set the Enemy Agent Properties
+            Agent enemyAgent = ea.GetComponent<Agent>();
+            enemyAgent.teamID = 1;
+            this.teamEnemy.Add(enemyAgent);
+            // -- //
+
+            // Notify the Team Managers to Run after Spawn
+            FindFirstObjectByType<AITeamManager>()?.OnAgentsSpawned();
+            FindFirstObjectByType<PlayerTeamManager>()?.OnAgentsSpawned();
+        }
     }
 
     public List<Flag> GetUncapturedFlags(int enemyTeamID)
