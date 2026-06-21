@@ -93,11 +93,11 @@ public class GameManager : MonoBehaviour
             enemyAgent.teamID = 1;
             this.teamEnemy.Add(enemyAgent);
             // -- //
-
-            // Notify the Team Managers to Run after Spawn
-            FindFirstObjectByType<AITeamManager>()?.OnAgentsSpawned();
-            FindFirstObjectByType<PlayerTeamManager>()?.OnAgentsSpawned();
         }
+
+        // Notify the Team Managers to Run after Spawn
+        FindFirstObjectByType<AITeamManager>()?.OnAgentsSpawned();
+        FindFirstObjectByType<PlayerTeamManager>()?.OnAgentsSpawned();
     }
 
     public List<Flag> GetUncapturedFlags(int enemyTeamID)
