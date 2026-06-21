@@ -108,14 +108,34 @@ public class GOBAttacker : MonoBehaviour
         if (this.nearestThreat == null) return goalSteering; // There is no Immediate Threat
 
         // Distance between the Agent and the Nearest Threat
-        float distance = Vector2.Distance(this.transform.position, nearestThreat.transform.position);
+        float distance = Vector2.Distance(this.transform.position, this.nearestThreat.transform.position);
+
+        // Home Side X-Position
+        float homeX = (self.teamID == 0) ? 3f : -3f; // +X for Player and -X for Enemy
+        Vector2 homeDirection = new Vector2(homeX, transform.position.y);
+        Vector2 seekToHome = this.steering.Seek(homeDirection);
 
         // The Threat is too close, Purely Evade
-        if (distance < this.immediateFleeRadius) return steering.Evade(nearestThreat.GetComponent<Rigidbody2D>());
+        if (distance < this.immediateFleeRadius)
+        {
+            // Evade
+            Vector2 evade = this.steering.Evade(this.nearestThreat.GetComponent<Rigidbody2D>());
+
+            // Blend Evade with Seek to Home to 'Evade to Safety'
+            Vector2 evadeToSafety = (evade + seekToHome).normalized * this.steering.maxSpeed;
+            return evadeToSafety;
+        }
 
         // Threat is within a Medium Range, Blend and have Evade Weight Scale with Proximity
         if (distance < this.threatDetectionRadius)
         {
+            // Evade
+            Vector2 evade = this.steering.Evade(this.nearestThreat.GetComponent<Rigidbody2D>());
+
+            // Blend Evade with 'Seek to Home' to 'Evade to Safety'
+            Vector2 evadeToSafety = (evade + seekToHome * 0.5f).normalized * this.steering.maxSpeed;
+
+            // Blend between the Steering Goal with 'Evade to Safety'
             float t = 1f - ((distance - this.immediateFleeRadius) / (this.threatDetectionRadius - this.immediateFleeRadius));
             return Vector2.Lerp(goalSteering, this.steering.Evade(this.nearestThreat.GetComponent<Rigidbody2D>()), t * 0.6f);
         }
