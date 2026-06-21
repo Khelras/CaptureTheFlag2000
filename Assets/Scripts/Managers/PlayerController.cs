@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -69,6 +70,15 @@ public class PlayerController : MonoBehaviour
     {
         this.controls.Player.SelectAgent.performed -= OnSelectAgent;
         this.controls.Player.Disable();
+    }
+
+    // Call after Agents are Spawned in Game Manager
+    public void OnAgentsSpawned()
+    {
+        this.selectedAgent = GameManager.Instance.teamPlayer.FirstOrDefault();
+        this.selectedAgent.isPlayerControlled = true;
+        this.selectedAgent.state = AgentState.PlayerControlled;
+        this.selectedAgent.SetSelected(true);
     }
 
     void OnSelectAgent(InputAction.CallbackContext ctx)

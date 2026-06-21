@@ -95,7 +95,8 @@ public class GameManager : MonoBehaviour
             // -- //
         }
 
-        // Notify the Team Managers to Run after Spawn
+        // Notify the Player Controller and the Team Managers to Run after Spawn
+        FindFirstObjectByType<PlayerController>()?.OnAgentsSpawned();
         FindFirstObjectByType<AITeamManager>()?.OnAgentsSpawned();
         FindFirstObjectByType<PlayerTeamManager>()?.OnAgentsSpawned();
     }

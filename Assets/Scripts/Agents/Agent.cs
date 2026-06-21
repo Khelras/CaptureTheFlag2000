@@ -26,13 +26,14 @@ public class Agent : MonoBehaviour
     void Awake()
     {
         this.rb = GetComponent<Rigidbody2D>();
+        this.sr = GetComponent<SpriteRenderer>();
+        this.baseColor = sr.color;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        this.sr = GetComponent<SpriteRenderer>();
-        this.baseColor = sr.color;
+        
     }
 
     // Update is called once per frame
