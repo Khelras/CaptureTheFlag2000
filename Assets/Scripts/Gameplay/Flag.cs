@@ -48,6 +48,11 @@ public class Flag : MonoBehaviour
         // Attach the Flag to the Agent
         this.transform.SetParent(agent.transform);
         this.transform.localPosition = new Vector3(0.3f, 0.6f, 0f);
+
+        // Feedback Text
+        UIManager.Instance.ShowFeedback(agent.teamID, (agent.teamID == 0)
+            ? "Player Agent has picked up a Flag!"
+            : "Enemy Agent has picked up a Flag!");
     }
 
     public void ReturnToHome()

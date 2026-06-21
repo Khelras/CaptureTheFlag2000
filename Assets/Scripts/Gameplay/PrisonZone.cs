@@ -39,6 +39,11 @@ public class PrisonZone : MonoBehaviour
         agent.prisonSlotIndex = this.OccupySlot(agent);
         agent.rb.position = this.SlotIndexToWorldPosition(agent.prisonSlotIndex);
 
+        // Feedback Text
+        UIManager.Instance.ShowFeedback((agent.teamID == 0) ? 1 : 0, (agent.teamID == 0)
+            ? "A Player Agent was Tagged and sent to Prison!"
+            : "Player Team Agent captured an Enemy Agent!");
+
         // Check Win Condition
         GameManager.Instance.CheckWinCondition();
     }
@@ -96,5 +101,10 @@ public class PrisonZone : MonoBehaviour
         float sign = (agent.teamID == 0) ? 1f : -1f;
         imprisonedAgent.transform.position = new Vector3(10f * sign, 0f, 0f);
         other.transform.position = new Vector3(9f * sign, 0f, 0f);
+
+        // Feedback Text
+        UIManager.Instance.ShowFeedback(agent.teamID, (agent.teamID == 0)
+            ? "Player Team Agent has freed a Teammate!"
+            : "Enemy Team Agent has freed one of their Teammates!");
     }
 }

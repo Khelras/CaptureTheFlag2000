@@ -150,6 +150,11 @@ public class GameManager : MonoBehaviour
         // Update Score Text
         UIManager.Instance.UpdateScore(this.teamPlayerScore, this.teamEnemyScore);
 
+        // Feedback Text
+        UIManager.Instance.ShowFeedback(scoringTeamID, (scoringTeamID == 0)
+            ? "Player Team scored a Flag!"
+            : "Enemy Team has scored a Flag!");
+
         // Check for a Win
         this.CheckWinCondition();
     }
