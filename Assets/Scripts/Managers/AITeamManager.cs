@@ -49,9 +49,9 @@ public class AITeamManager : MonoBehaviour
         var available = team.Where(a => a.isImprisoned == false).ToList();
         if (available.Count == 0) return;
 
-        // Keep Agents as Attackers that are already in the Opposing Team's Territory
+        // Keep Agents as Attackers that are already hold a Flag or is in the Opposing Team's Territory
         var alreadyAttacking = available
-            .Where(a => GameManager.Instance.IsInEnemyTerritory(a) == true)
+            .Where(a => a.carriedFlag == true || GameManager.Instance.IsInEnemyTerritory(a) == true)
             .ToList();
 
         // Max Attackers

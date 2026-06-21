@@ -59,9 +59,9 @@ public class PlayerTeamManager : MonoBehaviour
         // Max Attackers
         int maxAttackers = Mathf.Min(2, available.Count - 1);
 
-        // Keep Agents as Attackers that are already in the Opposing Team's Territory
+        // Keep Agents as Attackers that are already hold a Flag or is in the Opposing Team's Territory
         var alreadyAttacking = available
-            .Where(a => a.isPlayerControlled == false && GameManager.Instance.IsInEnemyTerritory(a) == true)
+            .Where(a => a.carriedFlag == true || GameManager.Instance.IsInEnemyTerritory(a) == true)
             .ToList();
 
         // Count Player as an Attacker Slot
