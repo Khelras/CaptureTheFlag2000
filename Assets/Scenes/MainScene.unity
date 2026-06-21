@@ -4540,6 +4540,7 @@ MonoBehaviour:
   agentLayer:
     serializedVersion: 2
     m_Bits: 64
+  selectedAgent: {fileID: 23028726}
 --- !u!1 &1152231574
 GameObject:
   m_ObjectHideFlags: 0

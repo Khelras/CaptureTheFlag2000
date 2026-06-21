@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
 
     // Selected Agent and Movement
     [SerializeField] private LayerMask agentLayer;
-    private Agent selectedAgent;
+    [SerializeField] private Agent selectedAgent;
     private GameControls controls;
     private Vector2 moveInput;
     private Vector2 smoothVelocity;
@@ -25,7 +25,14 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        // If there is a Selected Agent
+        if (selectedAgent != null)
+        {
+            // Set that Selected Agent to be Player Controlled
+            this.selectedAgent.isPlayerControlled = true;
+            this.selectedAgent.state = AgentState.PlayerControlled;
+            this.selectedAgent.SetSelected(true);
+        }
     }
 
     // Update is called once per frame
