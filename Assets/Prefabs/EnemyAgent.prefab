@@ -113,7 +113,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -123,7 +123,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!58 &3787265063602334671
 CircleCollider2D:
@@ -209,6 +209,10 @@ MonoBehaviour:
   maxSpeed: 4.2
   maxForce: 10
   slowingRadius: 1.5
+  obstacleDetectionDistance: 1.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 128
   velocity: {x: 0, y: 0}
 --- !u!114 &8518490631515084928
 MonoBehaviour:
@@ -225,7 +229,6 @@ MonoBehaviour:
   decisionInterval: 1.5
   immediateFleeRadius: 2.5
   threatDetectionRadius: 4
-  scoreZone: {fileID: 0}
 --- !u!114 &8376294152104791020
 MonoBehaviour:
   m_ObjectHideFlags: 0

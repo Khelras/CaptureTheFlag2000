@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     [Header("Smooth Movement")]
     public float acceleration = 15f;
     public float deceleration = 20f;
+    public LayerMask obstacleLayer;
+
 
     // Selected Agent and Movement
     [SerializeField] private LayerMask agentLayer;
@@ -119,10 +121,13 @@ public class PlayerController : MonoBehaviour
         // Normalise to prevent faster Diagonals
         if (this.smoothVelocity.sqrMagnitude > 1f) this.smoothVelocity = this.smoothVelocity.normalized;
 
+        // Clamp to Max Speed of the Agent
+        Vector2 desiredVelocity = Vector2.ClampMagnitude(smoothVelocity * this.selectedAgent.moveSpeed, this.selectedAgent.moveSpeed);
+
         // Apply Velocity to the Position
-        Vector2 targetPosition = this.selectedAgent.rb.position + this.smoothVelocity * this.selectedAgent.moveSpeed * Time.fixedDeltaTime;
-        targetPosition = this.ClampToCameraBounds(targetPosition); // Clamp to camera bounds
-        this.selectedAgent.rb.MovePosition(targetPosition);
+        Vector2 desiredPosition = this.selectedAgent.rb.position + desiredVelocity * Time.fixedDeltaTime;
+        desiredPosition = this.ClampToCameraBounds(desiredPosition); // Clamp to Camera Bounds
+        this.selectedAgent.rb.MovePosition(desiredPosition);
     }
 
     Vector2 ClampToCameraBounds(Vector2 position)
