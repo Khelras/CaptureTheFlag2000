@@ -55,8 +55,10 @@ public class AITeamManager : MonoBehaviour
             .ToList();
 
         // Max Attackers
-        int maxAttackers = Mathf.Min(2, available.Count - 1); // Always keep at least a Single Attacker
+        int maxAttackers = Mathf.Min(GameManager.Instance.chosenTeamSize / 2, available.Count - 1);
         int attackerSlotsRemaining = maxAttackers - alreadyAttacking.Count;
+
+
 
         // Fill any remaining Attacker Slots
         var newAttackers = available
@@ -71,6 +73,18 @@ public class AITeamManager : MonoBehaviour
         // Loop through all Agents
         foreach (var agent in available)
         {
+            // One Agent Left
+            if (available.Count == 1)
+            {
+                // Last Agent should Attack and Free Teammates
+                agent.GetComponent<GOBAttacker>().enabled = true;
+                agent.GetComponent<RuleBasedDefender>().enabled = false;
+
+                // Feedback Text
+                UIManager.Instance.ShowFeedback(1, "Last Enemy Agent: Hail Mary");
+                return;
+            }
+
             bool isAttacker = this.currentAttackers.Contains(agent);
             var attacker = agent.GetComponent<GOBAttacker>(); // Goal Oriented Behaviours for Attacking
             var defender = agent.GetComponent<RuleBasedDefender>(); // Rule Based Systems for Defending

@@ -57,7 +57,7 @@ public class PlayerTeamManager : MonoBehaviour
         bool playerIsAttacking = playerAgent != null && GameManager.Instance.IsInEnemyTerritory(playerAgent) == true;
 
         // Max Attackers
-        int maxAttackers = Mathf.Min(2, available.Count - 1);
+        int maxAttackers = Mathf.Min(GameManager.Instance.chosenTeamSize / 2, available.Count - 1);
 
         // Keep Agents as Attackers that are already hold a Flag or is in the Opposing Team's Territory
         var alreadyAttacking = available
